@@ -14,7 +14,7 @@ spring:
     url: jdbc:${dailySyncUpDBType}://${dailySyncUpDBIp}:${dailySyncUpDBPort}/${dailySyncUpDBName}
     username: ${dailySyncUpDBUser}
     password: ${dailySyncUpDBPassword}
-    driver-class-name: org.${dailySyncUpDBType}.jdbc.Driver
+    driver-class-name: com.${dailySyncUpDBType}.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 200
       minimum-idle: 100
@@ -28,7 +28,7 @@ spring:
     generate-ddl: false
     show-sql: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       naming-strategy: org.springframework.boot.orm.jpa.hibernate.SpringNamingStrategy
       jdbc:
         batch_size: 15

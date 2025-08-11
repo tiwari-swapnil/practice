@@ -1,6 +1,10 @@
 package com.swapniltiwari.daily_syncup.controller;
 
+import com.swapniltiwari.daily_syncup.entity.Team;
 import com.swapniltiwari.daily_syncup.models.Response;
+import com.swapniltiwari.daily_syncup.service.TeamService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,10 +12,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/team")
 public class TeamController
 {
+   @Autowired
+   private TeamService teamService;
+
    @PostMapping("/create-team")
-   public ResponseEntity<Response> createTeam() {
-      // TODO : will create team
-      return ResponseEntity.ok(new Response(true, "Team created successfully", null, null, null));
+   public ResponseEntity<Response> createTeam(@RequestBody Team team) {
+      return ResponseEntity.ok(new Response(true, "Team created successfully",
+              "SUCCESS", HttpStatus.CREATED.value(), teamService.createTeam(team)));
    }
 
    @GetMapping("/get-teams")
@@ -49,4 +56,19 @@ public class TeamController
       // TODO : will delete team
       return ResponseEntity.ok(new Response(true, "Team deleted successfully", null, null, null));
    }
+
+   @PutMapping("/update-team/{id}")
+   public ResponseEntity<Response> updateTeam(@PathVariable("id") String id){
+      // Todo : will update team
+      return ResponseEntity.ok(new Response(true, "Team updated successfully", null, null, null));
+   }
+
+   @GetMapping("/team/{teamId}/lead")
+   public ResponseEntity<Response> getTeamLead(@PathVariable("teamId") String teamId){
+      //todo will return team lead
+      return ResponseEntity.ok(new Response(true, "Team lead fetched successfully", null, null, null));
+
+   }
+
+
 }
