@@ -1,0 +1,57 @@
+server:
+  tomcat:
+    connection-timeout: 100000
+  port: 11782
+  servlet:
+    context-path: /daily_syncup
+spring:
+  application:
+    name: daily-sync-up
+  banner:
+    location: classpath:banner.txt
+
+  datasource:
+    url: jdbc:${dailySyncUpDBType}://${dailySyncUpDBIp}:${dailySyncUpDBPort}/${dailySyncUpDBName}
+    username: ${dailySyncUpDBUser}
+    password: ${dailySyncUpDBPassword}
+    driver-class-name: org.${dailySyncUpDBType}.jdbc.Driver
+    hikari:
+      maximum-pool-size: 200
+      minimum-idle: 100
+      idle-timeout: 600000       # 10 minutes
+      max-lifetime: 1800000      # 30 minutes
+      connection-timeout: 120000
+      poolName: hikari-daily-sync-up-service
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    generate-ddl: false
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      naming-strategy: org.springframework.boot.orm.jpa.hibernate.SpringNamingStrategy
+      jdbc:
+        batch_size: 15
+        order_inserts: true
+    properties:
+      hibernate:
+        format_sql: true
+        generate_statistics: false
+
+
+logging:
+  config: classpath:log4j2.xml
+  file:
+    path: /var/log/service/
+    name: /var/log/service/dailySyncUpService.log
+  level:
+    com.swapniltiwari: TRACE
+    org.springframework: ERROR
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: "env,beans"

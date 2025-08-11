@@ -1,0 +1,10 @@
+package com.swapniltiwari.daily_syncup.controller;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/syncups")
+public class SyncUpController
+{
+}
