@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,7 +34,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
             NotFoundException.class,
             UnauthorizedException.class,
             InternalServerException.class,
-            NotImplementedException.class
+            NotImplementedException.class,
+            ResourceNotFoundException.class
    })
    public final ResponseEntity<Response> handleException(RuntimeException ex)
    {
@@ -81,6 +83,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
                   (HttpStatus.NOT_IMPLEMENTED.value()), null);
          return new ResponseEntity<>(response, HttpStatus.NOT_IMPLEMENTED);
       }
+      else if (ex instanceof ResourceNotFoundException)
+      {
+         Response response = responseHelper.buildResponse(false, ErrorMessages.RESOURCE_NOT_FOUND.getMessage(), ex.getMessage(),
+                 (HttpStatus.NOT_FOUND.value()), null);
+         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+      }
 
 
       Response response = responseHelper.buildResponse(false, ErrorMessages.INTERNAL_SERVER_ERROR.getMessage(), ex.getMessage(),
@@ -89,10 +97,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
    }
 
 
-
+   @Override
    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers,
-            HttpStatus status, WebRequest request) {
+           MethodArgumentNotValidException ex, HttpHeaders headers,
+           HttpStatusCode status, WebRequest request) {
 
       // Your custom logic here, e.g.:
       Map<String, String> errors = new HashMap<>();

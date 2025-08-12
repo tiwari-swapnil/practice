@@ -23,7 +23,7 @@ public class MemberServiceImpl implements MemberService
    public Object createMember(Member member)
    {
       try{
-         Optional.ofNullable(member).orElseThrow(() -> new BadRequestException("Required data is missing"));
+         //Optional.ofNullable(member).orElseThrow(() -> new BadRequestException("Required data is missing"));
          if(Objects.isNull(member.getIsDeleted())) member.setIsDeleted(false);
          return memberRepository.save(member);
       }

@@ -34,6 +34,7 @@ public class Member
 
    @ManyToOne
    @JoinColumn(name = "team_id")
+   @NotBlank(message = "team id is required")
    private Team team;
 
    @CreationTimestamp

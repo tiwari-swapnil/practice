@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @NoArgsConstructor
 @JsonInclude(value = Include.NON_NULL)
@@ -42,11 +44,5 @@ public class Response
       this.errorData = errorData;
    }
 
-   public Response(Boolean status, String message, String displayMessage)
-   {
-      super();
-      this.status = status;
-      this.message = message;
-      this.displayMessage = displayMessage;
-   }
+
 }

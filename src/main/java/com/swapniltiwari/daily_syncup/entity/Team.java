@@ -1,6 +1,7 @@
 package com.swapniltiwari.daily_syncup.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -17,7 +18,8 @@ public class Team
    @Column(name = "team_id")
    private Long teamId;
 
-   @Column(name = "team_name")
+   @Column(name = "team_name", unique = true, nullable = false)
+   @NotBlank(message = "team name is required")
    private String teamName;
 
    @Column(name = "is_deleted")
