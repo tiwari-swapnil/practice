@@ -7,7 +7,8 @@ public enum ErrorMessages {
     NOT_FOUND("Requested resource could not be found"),
     UNAUTHORIZED("Authentication failed or user is not authorized"),
     INTERNAL_SERVER_ERROR("An unexpected error occurred on the server"),
-    NOT_IMPLEMENTED("This functionality is not yet implemented");
+    NOT_IMPLEMENTED("This functionality is not yet implemented"),
+    INVALID_METHOD_ARGUMENT("Invalid Method Arguments");
 
     private final String message;
 

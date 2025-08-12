@@ -41,4 +41,12 @@ public class Response
       this.data = data;
       this.errorData = errorData;
    }
+
+   public Response(Boolean status, String message, String displayMessage)
+   {
+      super();
+      this.status = status;
+      this.message = message;
+      this.displayMessage = displayMessage;
+   }
 }

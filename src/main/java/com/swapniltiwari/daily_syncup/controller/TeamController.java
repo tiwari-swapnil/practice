@@ -1,24 +1,33 @@
 package com.swapniltiwari.daily_syncup.controller;
 
+import com.swapniltiwari.daily_syncup.constants.Constant;
 import com.swapniltiwari.daily_syncup.entity.Team;
 import com.swapniltiwari.daily_syncup.models.Response;
 import com.swapniltiwari.daily_syncup.service.TeamService;
+import jdk.jfr.ContentType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/team")
+@Slf4j
 public class TeamController
 {
    @Autowired
    private TeamService teamService;
 
-   @PostMapping("/create-team")
-   public ResponseEntity<Response> createTeam(@RequestBody Team team) {
-      return ResponseEntity.ok(new Response(true, "Team created successfully",
-              "SUCCESS", HttpStatus.CREATED.value(), teamService.createTeam(team)));
+   @PostMapping(value = "/create-team", consumes = Constant.APPLICATION_JSON,
+            produces = Constant.APPLICATION_JSON)
+   public ResponseEntity<Response> createTeam(@RequestHeader(HttpHeaders.ACCEPT) String accept,
+            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType, @RequestBody Team team)
+   {
+      log.info("Request received at create-team Api");
+      return ResponseEntity.ok(new Response(true, "Team created successfully", "SUCCESS",
+               HttpStatus.CREATED.value(), teamService.createTeam(team)));
    }
 
    @GetMapping("/get-teams")
