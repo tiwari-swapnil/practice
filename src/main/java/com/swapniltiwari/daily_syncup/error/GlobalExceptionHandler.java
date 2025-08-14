@@ -102,7 +102,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
            MethodArgumentNotValidException ex, HttpHeaders headers,
            HttpStatusCode status, WebRequest request) {
 
-      // Your custom logic here, e.g.:
       Map<String, String> errors = new HashMap<>();
       ex.getBindingResult().getFieldErrors().forEach(error ->
                errors.put(error.getField(), error.getDefaultMessage())

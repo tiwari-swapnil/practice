@@ -8,10 +8,14 @@ import com.swapniltiwari.daily_syncup.service.TeamService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/teams")
@@ -68,40 +72,83 @@ public class TeamController {
    public ResponseEntity<Response> getAllTeamMembers(
            @RequestHeader(HttpHeaders.ACCEPT) String accept,
            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
-           @PathVariable("id") Long id) {
+           @PathVariable("teamId") Long teamId) {
 
       log.info("Request received at get-all-team-members API");
       return ResponseEntity.ok(new Response(true,
               "SUCCESS",
               "Team members fetched successfully",
               HttpStatus.OK.value(),
-              teamService.getAllTeamMembers(id)));
+              teamService.getAllTeamMembers(teamId)));
    }
 
 
-   @GetMapping("/{id}/syncups/{date}")
-   public ResponseEntity<Response> getTeamSyncups(@PathVariable("id") Long id, @PathVariable("date") String date) {
-      return ResponseEntity.ok(new Response(true, "Team syncups fetched successfully", null, null, teamService.getTeamSyncups(id, date)));
-   }
+   @DeleteMapping("/{teamId}")
+   public ResponseEntity<Response> deleteTeam(
+            @RequestHeader(HttpHeaders.ACCEPT) String accept,
+            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
+            @PathVariable("teamId") Long teamId) {
 
-   @DeleteMapping("/{id}")
-   public ResponseEntity<Response> deleteTeam(@PathVariable("id") Long id) {
-      teamService.deleteTeam(id);
-      return ResponseEntity.ok(new Response(true, "Team deleted successfully", null, null, null));
+      log.info("Request received at delete-team API");
+      return ResponseEntity.ok(new Response(true,
+               "SUCCESS",
+               "Team deleted successfully",
+               HttpStatus.NO_CONTENT.value(),
+               teamService.deleteTeam(teamId)));
    }
 
    @PutMapping("/{id}")
-   public ResponseEntity<Response> updateTeam(@PathVariable("id") Long id, @RequestBody Team team) {
-      return ResponseEntity.ok(new Response(true, "Team updated successfully", null, null, teamService.updateTeam(id, team)));
+   public ResponseEntity<Response> updateTeam(
+            @RequestHeader(HttpHeaders.ACCEPT) String accept,
+            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
+            @PathVariable("id") Long id,
+            @Valid@RequestBody Team team) {
+
+      log.info("Request received at update-team API");
+      return ResponseEntity.ok(new Response(true,
+               "SUCCESS",
+               "Team updated successfully",
+               HttpStatus.OK.value(),
+               teamService.updateTeam(id, team)));
    }
 
    @GetMapping("/{teamId}/lead")
-   public ResponseEntity<Response> getTeamLead(@PathVariable("teamId") Long teamId) {
-      return ResponseEntity.ok(new Response(true, "Team lead fetched successfully", null, null, teamService.getTeamLead(teamId)));
+   public ResponseEntity<Response> getTeamLead(
+            @RequestHeader(HttpHeaders.ACCEPT) String accept,
+            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
+            @PathVariable("teamId") Long teamId) {
+
+      log.info("Request received at get-team-lead API");
+      return ResponseEntity.ok(new Response(true,
+               "SUCCESS",
+               "Team lead fetched successfully",
+               HttpStatus.OK.value(),
+               teamService.getTeamLead(teamId)));
    }
 
    @PostMapping("/{teamId}/members")
-   public ResponseEntity<Response> addTeamMember(@PathVariable("teamId") Long teamId, @RequestBody Member member) {
-      return ResponseEntity.ok(new Response(true, "Team member added successfully", null, null, teamService.addMemberToTeam(teamId, member)));
+   public ResponseEntity<Response> addTeamMember(
+            @RequestHeader(HttpHeaders.ACCEPT) String accept,
+            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
+            @PathVariable("teamId") Long teamId,
+            @Valid @RequestBody Member member) {
+      return ResponseEntity.ok(new Response(true,
+               "SUCCESS",
+               "Team member added successfully",
+               HttpStatus.CREATED.value(),
+               teamService.addMemberToTeam(teamId, member)));
+   }
+
+   @PostMapping("/{teamId}/addMultipleMembers")
+   public ResponseEntity<Response> addMultipleTeamMembers(
+            @RequestHeader(HttpHeaders.ACCEPT) String accept,
+            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
+            @PathVariable("teamId") Long teamId,
+            @Valid @RequestBody List<Member> member) {
+      return ResponseEntity.ok(new Response(true,
+               "SUCCESS",
+               "Team member added successfully",
+               HttpStatus.CREATED.value(),
+               teamService.addMultipleMemberToTeam(teamId, member)));
    }
 }
