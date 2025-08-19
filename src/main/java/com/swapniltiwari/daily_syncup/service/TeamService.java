@@ -22,7 +22,7 @@ public interface TeamService {
 
     Object updateTeam(Long id, Team team);
 
-    Object getTeamLead(Long teamId);
+    Object getTeamLead(Long teamId, String role);
 
     Object addMemberToTeam(Long teamId, Member member);
 

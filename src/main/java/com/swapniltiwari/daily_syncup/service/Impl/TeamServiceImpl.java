@@ -5,6 +5,7 @@ import com.swapniltiwari.daily_syncup.entity.Team;
 import com.swapniltiwari.daily_syncup.enums.Role;
 import com.swapniltiwari.daily_syncup.exceptions.BadRequestException;
 import com.swapniltiwari.daily_syncup.exceptions.ResourceNotFoundException;
+import com.swapniltiwari.daily_syncup.repositories.MemberRepository;
 import com.swapniltiwari.daily_syncup.repositories.TeamRepository;
 import com.swapniltiwari.daily_syncup.service.TeamService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -21,11 +24,18 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private TeamRepository teamRepository;
 
+    @Autowired
+    private MemberRepository memberRepository;
+
     @Override
     public Object createTeam(Team team) {
         try {
             if (teamRepository.existsByTeamNameIgnoreCase(team.getTeamName())) {
                 throw new BadRequestException("Team name already exists");
+            }
+
+            if(Objects.isNull(team.getIsDeleted())){
+                team.setIsDeleted(false);
             }
 
             log.info("Saving the team details to db");
@@ -71,7 +81,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Team updateTeam(Long id, Team team) {
         try {
-            Optional<Team> optionalTeam = teamRepository.findByIdAndIsDeletedFalse(id);
+            Optional<Team> optionalTeam = teamRepository.findByTeamIdAndIsDeletedFalse(id);
 
             if (optionalTeam.isEmpty()) {
                 log.info("Team not found with id: {}", id);
@@ -103,12 +113,25 @@ public class TeamServiceImpl implements TeamService {
 
 
     @Override
-    public Member getTeamLead(Long teamId) {
+    public List<Member> getTeamLead(Long teamId, String role) {
         try {
-            return teamRepository
-                     .findByTeam_TeamIdAndRoleAndIsDeletedFalse(teamId, Role.TEAM_LEAD.getMessage())
-                     .orElseThrow(() -> new ResourceNotFoundException(
-                              "Team lead not found for team with id: " + teamId));
+            log.info("Getting team role ");
+
+            teamRepository.findByTeamIdAndIsDeletedFalse(teamId)
+                    .orElseThrow(()-> new ResourceNotFoundException( "Team not found with id: " + teamId));
+
+            switch(role.toLowerCase()){
+                case "teamlead" -> role = Role.TEAM_LEAD.getMessage();
+                case "developer" -> role = Role.DEVELOPER.getMessage();
+                case "intern" -> role = Role.INTERN.getMessage();
+                case "qa" -> role = Role.QA.getMessage();
+                case "scrummaster" -> role = Role.SCRUM_MASTER.getMessage();
+                case "designer" -> role = Role.DESIGNER.getMessage();
+            }
+
+            return memberRepository
+                     .findByTeam_TeamIdAndRoleAndIsDeletedFalse(teamId, role);
+
         } catch (Exception e) {
             log.error("Exception occurred while fetching team lead for teamId {}: ", teamId, e);
             throw e;
@@ -117,14 +140,25 @@ public class TeamServiceImpl implements TeamService {
 
 
     @Override
-    public Team addMemberToTeam(Long teamId, Member member) {
+    public String addMemberToTeam(Long teamId, Member member) {
         try {
-            Team team = teamRepository.findByIdAndIsDeletedFalse(teamId)
+            Team team = teamRepository.findByTeamIdAndIsDeletedFalse(teamId)
                      .orElseThrow(() -> new ResourceNotFoundException(
                               "Team not found with id: " + teamId));
 
-            team.getMembers().add(member);
-            return teamRepository.save(team);
+            if(Objects.isNull(member)){
+                throw new BadRequestException("Member is null");
+            }
+
+            log.info("Adding member to the team");
+            member.setIsDeleted(false);
+            member.setTeam(team);
+            Set<Member> members = team.getMembers();
+            members.add(member);
+            team.setIsDeleted(false);
+            Team save = teamRepository.save(team);
+            log.info("Member added successfully to team");
+            return team.getTeamName();
 
         } catch (Exception e) {
             log.error("Exception occurred while adding member to team with id {}: ", teamId, e);
@@ -136,16 +170,27 @@ public class TeamServiceImpl implements TeamService {
     public Object addMultipleMemberToTeam(Long teamId, List<Member> member)
     {
         try{
-            Team team = teamRepository.findByIdAndIsDeletedFalse(teamId)
+            Team team = teamRepository.findByTeamIdAndIsDeletedFalse(teamId)
                      .orElseThrow(() -> new ResourceNotFoundException(
                               "Team not found with id: " + teamId));
 
-            if (member != null && !member.isEmpty()) {
-                team.getMembers().addAll(member);
-                return teamRepository.save(team);
+            if (member == null || member.isEmpty()) {
+                throw new BadRequestException("Members are null ");
             }
 
-            return null;
+            log.info("Adding members to the team");
+
+            member.forEach((m)-> {
+                m.setIsDeleted(false);
+                m.setTeam(team);
+                team.getMembers().add(m);
+                team.setIsDeleted(false);
+                teamRepository.save(team);
+            });
+
+            log.info("All members added successfully ");
+            return true;
+
         }
         catch (Exception e){
             log.error("Exception occurred while adding multiple member to team with id {}: ", teamId, e);
@@ -156,7 +201,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Object deleteTeam(Long id) {
         try{
-            Optional<Team> optionalTeam = teamRepository.findByIdAndIsDeletedFalse(id);
+            Optional<Team> optionalTeam = teamRepository.findByTeamIdAndIsDeletedFalse(id);
             if(optionalTeam.isPresent()){
                 Team team = optionalTeam.get();
                 team.setIsDeleted(true);

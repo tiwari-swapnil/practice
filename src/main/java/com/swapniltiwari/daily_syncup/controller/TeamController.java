@@ -8,13 +8,11 @@ import com.swapniltiwari.daily_syncup.service.TeamService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -112,18 +110,19 @@ public class TeamController {
                teamService.updateTeam(id, team)));
    }
 
-   @GetMapping("/{teamId}/lead")
+   @GetMapping("/{teamId}/{role}")
    public ResponseEntity<Response> getTeamLead(
             @RequestHeader(HttpHeaders.ACCEPT) String accept,
             @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
-            @PathVariable("teamId") Long teamId) {
+            @PathVariable("teamId") Long teamId,
+            @PathVariable("role") String role) {
 
       log.info("Request received at get-team-lead API");
       return ResponseEntity.ok(new Response(true,
                "SUCCESS",
                "Team lead fetched successfully",
                HttpStatus.OK.value(),
-               teamService.getTeamLead(teamId)));
+               teamService.getTeamLead(teamId, role)));
    }
 
    @PostMapping("/{teamId}/members")
@@ -132,6 +131,8 @@ public class TeamController {
             @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
             @PathVariable("teamId") Long teamId,
             @Valid @RequestBody Member member) {
+
+      log.info("Request Received at add-member-to-team API");
       return ResponseEntity.ok(new Response(true,
                "SUCCESS",
                "Team member added successfully",
@@ -145,6 +146,8 @@ public class TeamController {
             @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
             @PathVariable("teamId") Long teamId,
             @Valid @RequestBody List<Member> member) {
+
+      log.info("Request received at add-multiple-member-to-team API");
       return ResponseEntity.ok(new Response(true,
                "SUCCESS",
                "Team member added successfully",

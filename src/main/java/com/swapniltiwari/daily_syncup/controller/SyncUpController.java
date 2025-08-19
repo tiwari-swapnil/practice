@@ -7,5 +7,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/syncups")
 public class SyncUpController
 {
-   //get all syncups by day , week , month, year
+
 }

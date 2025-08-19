@@ -1,15 +1,18 @@
 package com.swapniltiwari.daily_syncup.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "members")
-@Data
+@Getter
+@Setter
 public class Member
 {
    @Id
@@ -34,7 +37,7 @@ public class Member
 
    @ManyToOne
    @JoinColumn(name = "team_id")
-   @NotBlank(message = "team id is required")
+   @JsonIgnore
    private Team team;
 
    @CreationTimestamp
