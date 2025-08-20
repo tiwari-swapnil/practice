@@ -3,7 +3,7 @@ server:
     connection-timeout: 100000
   port: 11782
   servlet:
-    context-path: /daily_syncup
+    context-path: /dailySyncUp
 spring:
   application:
     name: daily-sync-up

@@ -9,7 +9,8 @@ public enum ErrorMessages {
     INTERNAL_SERVER_ERROR("An unexpected error occurred on the server"),
     NOT_IMPLEMENTED("This functionality is not yet implemented"),
     INVALID_METHOD_ARGUMENT("Invalid Method Arguments"),
-    RESOURCE_NOT_FOUND("Requested resource is not available");
+    RESOURCE_NOT_FOUND("Requested resource is not available"),
+    INVALID_OPERATION("Invalid Operation");
 
     private final String message;
 

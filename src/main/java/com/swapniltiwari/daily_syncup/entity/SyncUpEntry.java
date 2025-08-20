@@ -25,7 +25,7 @@ public class SyncUpEntry
    private String todayPlan;
 
    @Column(name = "is_deleted")
-   private Boolean isDeleted;
+   private Boolean isDeleted = false;
 
    @ManyToOne
    @JoinColumn(name = "member_id")

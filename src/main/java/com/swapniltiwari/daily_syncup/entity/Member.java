@@ -33,12 +33,15 @@ public class Member
    private String role;
 
    @Column(name = "is_deleted")
-   private Boolean isDeleted;
+   private Boolean isDeleted = false;
 
    @ManyToOne
    @JoinColumn(name = "team_id")
    @JsonIgnore
    private Team team;
+
+   @Column(name = "is_scrum_master", nullable = false)
+   private Boolean isScrumMaster = false;
 
    @CreationTimestamp
    @Column(name = "created_on", nullable = false, updatable = false)

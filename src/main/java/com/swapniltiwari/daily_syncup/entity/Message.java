@@ -22,7 +22,7 @@ public class Message
    private LocalDateTime sentAt;
 
    @Column(name = "is_deleted")
-   private Boolean isDeleted;
+   private Boolean isDeleted = false;
 
    @ManyToOne
    @JoinColumn(name = "from_member_id")

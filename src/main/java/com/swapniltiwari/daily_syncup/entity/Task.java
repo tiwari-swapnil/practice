@@ -23,7 +23,7 @@ public class Task
    private String description;
 
    @Column(name = "is_deleted")
-   private Boolean isDeleted;
+   private Boolean isDeleted = false;
 
    @Column(name = "is_completed")
    private boolean isCompleted = false;

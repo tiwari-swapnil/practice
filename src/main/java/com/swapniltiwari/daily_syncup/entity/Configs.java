@@ -30,7 +30,7 @@ public class Configs
    private String description;
 
    @Column(name = "is_deleted")
-   private Boolean isDeleted;
+   private Boolean isDeleted = false;
 
    @CreationTimestamp
    @Column(name = "created_on", nullable = false, updatable = false)

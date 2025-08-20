@@ -22,9 +22,11 @@ public interface TeamService {
 
     Object updateTeam(Long id, Team team);
 
-    Object getTeamLead(Long teamId, String role);
+    Object getMemberBasedOnRole(Long teamId, String role);
 
     Object addMemberToTeam(Long teamId, Member member);
 
     Object addMultipleMemberToTeam(Long teamId, @Valid List<Member> member);
+
+    Object toggleMemberScrumMaster(Long teamId, Long memberId, String isScrumMaster);
 }

@@ -31,7 +31,7 @@ public class TeamController {
       log.info("Request received at create-team API");
       return ResponseEntity.ok(new Response(
               true,
-              "SUCCESS",
+              Constant.SUCCESS,
               "Team created successfully",
               HttpStatus.CREATED.value(),
               teamService.createTeam(team)
@@ -39,20 +39,20 @@ public class TeamController {
    }
 
    @GetMapping(value = "", consumes = Constant.APPLICATION_JSON, produces = Constant.APPLICATION_JSON)
-   public ResponseEntity<Response> getTeams(
+   public ResponseEntity<Response> getAllTeams(
            @RequestHeader(HttpHeaders.ACCEPT) String accept,
            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType) {
 
       log.info("Request received at get-all-teams API");
       return ResponseEntity.ok(new Response(
               true,
-              "SUCCESS",
+              Constant.SUCCESS,
               "All teams fetched successfully",
               HttpStatus.OK.value(),
               teamService.getAllTeams()));
    }
 
-   @GetMapping("/{teamId}")
+   @GetMapping(value = "/{teamId}", consumes = Constant.APPLICATION_JSON, produces = Constant.APPLICATION_JSON)
    public ResponseEntity<Response> getTeam(
            @RequestHeader(HttpHeaders.ACCEPT) String accept,
            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
@@ -60,13 +60,13 @@ public class TeamController {
 
       log.info("Request received at get-specific-team API");
       return ResponseEntity.ok(new Response(true,
-              "SUCCESS",
+              Constant.SUCCESS,
               "Team fetched successfully",
               HttpStatus.OK.value(),
               teamService.getTeamById(teamId)));
    }
 
-   @GetMapping("/{id}/members")
+   @GetMapping(value = "/{teamId}/members", consumes = Constant.APPLICATION_JSON, produces = Constant.APPLICATION_JSON)
    public ResponseEntity<Response> getAllTeamMembers(
            @RequestHeader(HttpHeaders.ACCEPT) String accept,
            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
@@ -74,14 +74,14 @@ public class TeamController {
 
       log.info("Request received at get-all-team-members API");
       return ResponseEntity.ok(new Response(true,
-              "SUCCESS",
+              Constant.SUCCESS,
               "Team members fetched successfully",
               HttpStatus.OK.value(),
               teamService.getAllTeamMembers(teamId)));
    }
 
 
-   @DeleteMapping("/{teamId}")
+   @DeleteMapping(value = "/{teamId}", consumes = Constant.APPLICATION_JSON, produces = Constant.APPLICATION_JSON)
    public ResponseEntity<Response> deleteTeam(
             @RequestHeader(HttpHeaders.ACCEPT) String accept,
             @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
@@ -89,13 +89,13 @@ public class TeamController {
 
       log.info("Request received at delete-team API");
       return ResponseEntity.ok(new Response(true,
-               "SUCCESS",
+               Constant.SUCCESS,
                "Team deleted successfully",
                HttpStatus.NO_CONTENT.value(),
                teamService.deleteTeam(teamId)));
    }
 
-   @PutMapping("/{id}")
+   @PutMapping(value = "/{id}", consumes = Constant.APPLICATION_JSON, produces = Constant.APPLICATION_JSON)
    public ResponseEntity<Response> updateTeam(
             @RequestHeader(HttpHeaders.ACCEPT) String accept,
             @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
@@ -104,14 +104,14 @@ public class TeamController {
 
       log.info("Request received at update-team API");
       return ResponseEntity.ok(new Response(true,
-               "SUCCESS",
+               Constant.SUCCESS,
                "Team updated successfully",
                HttpStatus.OK.value(),
                teamService.updateTeam(id, team)));
    }
 
-   @GetMapping("/{teamId}/{role}")
-   public ResponseEntity<Response> getTeamLead(
+   @GetMapping(value = "/{teamId}/{role}", consumes = Constant.APPLICATION_JSON, produces = Constant.APPLICATION_JSON)
+   public ResponseEntity<Response> getMemberBasedOnRole(
             @RequestHeader(HttpHeaders.ACCEPT) String accept,
             @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
             @PathVariable("teamId") Long teamId,
@@ -119,13 +119,13 @@ public class TeamController {
 
       log.info("Request received at get-team-lead API");
       return ResponseEntity.ok(new Response(true,
-               "SUCCESS",
+               Constant.SUCCESS,
                "Team lead fetched successfully",
                HttpStatus.OK.value(),
-               teamService.getTeamLead(teamId, role)));
+               teamService.getMemberBasedOnRole(teamId, role)));
    }
 
-   @PostMapping("/{teamId}/members")
+   @PostMapping(value = "/{teamId}/members", consumes = Constant.APPLICATION_JSON, produces = Constant.APPLICATION_JSON)
    public ResponseEntity<Response> addTeamMember(
             @RequestHeader(HttpHeaders.ACCEPT) String accept,
             @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
@@ -134,13 +134,13 @@ public class TeamController {
 
       log.info("Request Received at add-member-to-team API");
       return ResponseEntity.ok(new Response(true,
-               "SUCCESS",
+               Constant.SUCCESS,
                "Team member added successfully",
                HttpStatus.CREATED.value(),
                teamService.addMemberToTeam(teamId, member)));
    }
 
-   @PostMapping("/{teamId}/addMultipleMembers")
+   @PostMapping(value = "/{teamId}/addMultipleMembers", consumes = Constant.APPLICATION_JSON, produces = Constant.APPLICATION_JSON)
    public ResponseEntity<Response> addMultipleTeamMembers(
             @RequestHeader(HttpHeaders.ACCEPT) String accept,
             @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
@@ -149,9 +149,26 @@ public class TeamController {
 
       log.info("Request received at add-multiple-member-to-team API");
       return ResponseEntity.ok(new Response(true,
-               "SUCCESS",
+               Constant.SUCCESS,
                "Team member added successfully",
                HttpStatus.CREATED.value(),
                teamService.addMultipleMemberToTeam(teamId, member)));
    }
+
+   @PutMapping(value = "/{teamId}/toggleMemberState/{memberId}/{isScrumMaster}", consumes = Constant.APPLICATION_JSON, produces = Constant.APPLICATION_JSON)
+   public ResponseEntity<Response> toggleMemberScrumMasterState(
+            @RequestHeader(HttpHeaders.ACCEPT) String accept,
+            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
+            @PathVariable("teamId") Long teamId,
+            @PathVariable("memberId") Long memberId,
+            @PathVariable("isScrumMaster") String isScrumMaster) {
+
+      log.info("Request received at toggle-member-scrum-master-state API");
+      return ResponseEntity.ok(new Response(true,
+               Constant.SUCCESS,
+               "Team Member scrum master state toggled successfully",
+               HttpStatus.OK.value(),
+               teamService.toggleMemberScrumMaster(teamId, memberId, isScrumMaster)));
+   }
+
 }

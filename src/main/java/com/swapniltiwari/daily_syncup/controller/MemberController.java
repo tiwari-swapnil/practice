@@ -20,21 +20,57 @@ public class MemberController
    @Autowired
    private MemberService memberService;
 
-   @PostMapping(value = "/create-member", consumes = Constant.APPLICATION_JSON, produces = Constant.APPLICATION_JSON)
+   @PostMapping(value = "/createMember",
+            consumes = Constant.APPLICATION_JSON,
+            produces = Constant.APPLICATION_JSON)
    public ResponseEntity<Response> createMember(
             @RequestHeader(HttpHeaders.ACCEPT) String accept,
             @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
             @Valid @RequestBody Member member
-   ) {
+   )
+   {
       log.info("Request Received to create member, creating member...");
-      return ResponseEntity.ok(new Response(true, "SUCCESS"," Member created successfully",
-               HttpStatus.CREATED.value(), memberService.createMember(member)));
+      return ResponseEntity.ok(new Response(true,
+               Constant.SUCCESS,
+               " Member created successfully",
+               HttpStatus.CREATED.value(),
+               memberService.createMember(member)));
    }
 
-   @GetMapping("/get-member/{id}")
-   public ResponseEntity<Response> getMember(@PathVariable("id") String id) {
-      // TODO : will return specific member
-      return ResponseEntity.ok(new Response(true, "Member fetched successfully", null, null, null));
+   @GetMapping(value = "/getMember/{memberId}",
+            consumes = Constant.APPLICATION_JSON,
+            produces = Constant.APPLICATION_JSON)
+   public ResponseEntity<Response> getSpecificMember(
+            @PathVariable("memberId") String memberId,
+            @RequestHeader(HttpHeaders.ACCEPT) String accept,
+            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType
+   )
+   {
+      log.info("Request Received to get specific member");
+      return ResponseEntity.ok(new Response(true,
+               Constant.SUCCESS,
+               "Member fetched successfully",
+               HttpStatus.OK.value(),
+               memberService.getSpecificMember(memberId)));
+
+   }
+
+
+   @GetMapping(value = "/getAllMembers",
+            consumes = Constant.APPLICATION_JSON,
+            produces = Constant.APPLICATION_JSON)
+   public ResponseEntity<Response> getSpecificMember(
+            @RequestHeader(HttpHeaders.ACCEPT) String accept,
+            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType
+   )
+   {
+      log.info("Request Received to get all member");
+      return ResponseEntity.ok(new Response(true,
+               Constant.SUCCESS,
+               "All Members fetched successfully",
+               HttpStatus.OK.value(),
+               memberService.getAllMembers()));
+
    }
 
    @GetMapping("/members/{id}/tasks")
@@ -49,16 +85,39 @@ public class MemberController
       return ResponseEntity.ok(new Response(true, "Member messages fetched successfully", null, null, null));
    }
 
-   @DeleteMapping("/delete-member")
-   public ResponseEntity<Response> deleteMember() {
-      // TODO : will delete member
-      return ResponseEntity.ok(new Response(true, "Member deleted successfully", null, null, null));
+   @DeleteMapping(value = "/deleteMember/{memberId}",
+            consumes = Constant.APPLICATION_JSON,
+            produces = Constant.APPLICATION_JSON)
+   public ResponseEntity<Response> deleteMember(
+            @PathVariable("memberId") String memberId,
+            @RequestHeader(HttpHeaders.ACCEPT) String accept,
+            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType
+   )
+   {
+      log.info("Request Received to delete member, deleting member...");
+      return ResponseEntity.ok(new Response(true,
+               Constant.SUCCESS,
+               "Member deleted successfully",
+               HttpStatus.NO_CONTENT.value(),
+               memberService.deleteMember(memberId)));
    }
 
-   @PutMapping("/update-member")
-   public ResponseEntity<Response> updateMember() {
-      // TODO : will update member
-      return ResponseEntity.ok(new Response(true, "Member updated successfully", null, null, null));
+   @PutMapping(value = "/updateMember/{memberId}",
+            consumes = Constant.APPLICATION_JSON,
+            produces = Constant.APPLICATION_JSON)
+   public ResponseEntity<Response> updateMember(
+            @RequestHeader(HttpHeaders.ACCEPT) String accept,
+            @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType,
+            @PathVariable("memberId") String memberId,
+            @Valid @RequestBody Member member
+   )
+   {
+      log.info("Request Received to update member, updating member...");
+      return ResponseEntity.ok(new Response(true,
+               Constant.SUCCESS,
+               "Member updated successfully",
+               HttpStatus.CREATED.value(),
+               memberService.updateMember(memberId, member)));
    }
 
 }

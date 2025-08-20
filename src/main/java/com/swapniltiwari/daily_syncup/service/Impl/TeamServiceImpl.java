@@ -2,9 +2,10 @@ package com.swapniltiwari.daily_syncup.service.Impl;
 
 import com.swapniltiwari.daily_syncup.entity.Member;
 import com.swapniltiwari.daily_syncup.entity.Team;
-import com.swapniltiwari.daily_syncup.enums.Role;
 import com.swapniltiwari.daily_syncup.exceptions.BadRequestException;
+import com.swapniltiwari.daily_syncup.exceptions.InvalidOperationException;
 import com.swapniltiwari.daily_syncup.exceptions.ResourceNotFoundException;
+import com.swapniltiwari.daily_syncup.helper.HelperMethods;
 import com.swapniltiwari.daily_syncup.repositories.MemberRepository;
 import com.swapniltiwari.daily_syncup.repositories.TeamRepository;
 import com.swapniltiwari.daily_syncup.service.TeamService;
@@ -27,15 +28,14 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private HelperMethods helperMethods;
+
     @Override
     public Object createTeam(Team team) {
         try {
             if (teamRepository.existsByTeamNameIgnoreCase(team.getTeamName())) {
                 throw new BadRequestException("Team name already exists");
-            }
-
-            if(Objects.isNull(team.getIsDeleted())){
-                team.setIsDeleted(false);
             }
 
             log.info("Saving the team details to db");
@@ -113,21 +113,14 @@ public class TeamServiceImpl implements TeamService {
 
 
     @Override
-    public List<Member> getTeamLead(Long teamId, String role) {
+    public List<Member> getMemberBasedOnRole(Long teamId, String role) {
         try {
             log.info("Getting team role ");
 
             teamRepository.findByTeamIdAndIsDeletedFalse(teamId)
                     .orElseThrow(()-> new ResourceNotFoundException( "Team not found with id: " + teamId));
 
-            switch(role.toLowerCase()){
-                case "teamlead" -> role = Role.TEAM_LEAD.getMessage();
-                case "developer" -> role = Role.DEVELOPER.getMessage();
-                case "intern" -> role = Role.INTERN.getMessage();
-                case "qa" -> role = Role.QA.getMessage();
-                case "scrummaster" -> role = Role.SCRUM_MASTER.getMessage();
-                case "designer" -> role = Role.DESIGNER.getMessage();
-            }
+            role = helperMethods.getRoleValue(role);
 
             return memberRepository
                      .findByTeam_TeamIdAndRoleAndIsDeletedFalse(teamId, role);
@@ -153,10 +146,12 @@ public class TeamServiceImpl implements TeamService {
             log.info("Adding member to the team");
             member.setIsDeleted(false);
             member.setTeam(team);
+
+            member.setRole(helperMethods.getRoleValue(member.getRole()));
             Set<Member> members = team.getMembers();
             members.add(member);
             team.setIsDeleted(false);
-            Team save = teamRepository.save(team);
+            teamRepository.save(team);
             log.info("Member added successfully to team");
             return team.getTeamName();
 
@@ -183,6 +178,7 @@ public class TeamServiceImpl implements TeamService {
             member.forEach((m)-> {
                 m.setIsDeleted(false);
                 m.setTeam(team);
+                m.setRole(helperMethods.getRoleValue(m.getRole()));
                 team.getMembers().add(m);
                 team.setIsDeleted(false);
                 teamRepository.save(team);
@@ -191,6 +187,27 @@ public class TeamServiceImpl implements TeamService {
             log.info("All members added successfully ");
             return true;
 
+        }
+        catch (Exception e){
+            log.error("Exception occurred while adding multiple member to team with id {}: ", teamId, e);
+            throw e;
+        }
+    }
+
+    @Override
+    public Object toggleMemberScrumMaster(Long teamId, Long memberId, String isScrumMaster)
+    {
+        try{
+            System.out.println("Is scrum master: " + isScrumMaster);
+            Member member = memberRepository.findByMemberIdAndIsDeletedFalse(memberId).orElseThrow(
+                     () -> new ResourceNotFoundException("Member not found with id: " + memberId));
+
+            if(member.getTeam() == null ){
+                throw new InvalidOperationException("Cannot make member scrum master, as member is not part of any team");
+            }
+           member.setIsScrumMaster(Boolean.parseBoolean(isScrumMaster));
+           memberRepository.save(member);
+            return true;
         }
         catch (Exception e){
             log.error("Exception occurred while adding multiple member to team with id {}: ", teamId, e);

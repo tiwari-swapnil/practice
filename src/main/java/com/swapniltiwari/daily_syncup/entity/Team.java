@@ -1,10 +1,7 @@
 package com.swapniltiwari.daily_syncup.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,7 +26,7 @@ public class Team
    private String teamName;
 
    @Column(name = "is_deleted")
-   private Boolean isDeleted;
+   private Boolean isDeleted = false;
 
    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
    private Set<Member> members = new HashSet<>();

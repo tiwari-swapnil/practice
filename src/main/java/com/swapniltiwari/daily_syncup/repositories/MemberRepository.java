@@ -9,4 +9,12 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long>
 {
     List<Member> findByTeam_TeamIdAndRoleAndIsDeletedFalse(Long teamId, String role);
+
+    Optional<Member> findByMemberId(Long memberId);
+
+    List<Member> findAllByIsDeletedFalse();
+
+    Optional<Member> findByMemberIdAndIsDeletedFalse(Long memberId);
+
+
 }

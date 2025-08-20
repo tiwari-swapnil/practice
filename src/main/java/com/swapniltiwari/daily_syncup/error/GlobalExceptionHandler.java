@@ -89,6 +89,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
                  (HttpStatus.NOT_FOUND.value()), null);
          return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
       }
+      else if (ex instanceof InvalidOperationException)
+      {
+         Response response = responseHelper.buildResponse(false, ErrorMessages.INVALID_OPERATION.getMessage(), ex.getMessage(),
+                  (HttpStatus.FORBIDDEN.value()), null);
+         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+      }
 
 
       Response response = responseHelper.buildResponse(false, ErrorMessages.INTERNAL_SERVER_ERROR.getMessage(), ex.getMessage(),
